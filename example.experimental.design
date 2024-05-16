@@ -1,0 +1,5 @@
+## lines starting with # are considered as comments and will be ignored
+## format (3 column separated by TAB)
+##sample-ID	guide-RNA-sequence	species
+Mouse-Pcsk9-1	AGCAGCAGCGGCGGCAACAGNGG	mm10
+HEK293T-spCas9-H1-rep3	GGGAAAGACCCAGCATCCGTNGG	hg38

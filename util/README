@@ -1,0 +1,41 @@
+=========================== get translocation sequence
+
+here I use HEK293T-spRY-EMX1 as an example
+
+1. get the supporting reads
+$ perl util/find.reads.pl HEK293T-spRY-EMX1.structural.variants ext.pass.cutpoints.gz unc.pass.cutpoints.gz | -k1,1 -k2,2 > zzz
+
+2. get the reads for each loci.
+e.g., chr4:46032619--chr8:108187176
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1101:31910:11569#51#-1
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1103:20835:1313#51#231
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1106:30608:29105#51#231
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1107:22046:4100#51#231
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1107:23945:2378#51#-1
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1108:26160:34334#51#-1
+chr4:46032619   chr8:108187176  A00808:1380:HV35HDSX5:4:1110:16459:8672#51#231
+
+$ grep -2 A00808:1380:HV35HDSX5:4:1101:31910:11569 *.extendedFrags.fastq
+
+sometimes the data is in uncombined fastq:
+grep -2 A00808:1380:HV35HDSX5:4:1101:31910:11569 *.notCombined_*.fastq
+
+3. BLAT the sequence, recognize the spike-in manually as BLAT may contain several basepairs of the spike-in;
+as most reads contains mismatches/indels, so I need to use the reference from BLAT
+
+
+=========================== search for large deletions
+$ perl  ../screen.large.deletion.pl HEK293T-spCas9-V2-rep2
+#Loci	++	+-	-+	--
+chr11:12287388-13926823	915	925	0	0
+chr11:12287388-73747453	0	8	0	0
+chr11:19777112-101567065	0	0	0	55
+chr11:19777112-31795935	0	461	0	0
+chr11:19777112-73747453	0	159	0	0
+chr11:374664-12287388	0	0	0	807
+
+
++- : circle
+-+ : large deletion
+++/-- : recombination???
+

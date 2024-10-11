@@ -1,8 +1,12 @@
 #!/bin/bash
 
 ## example codes for building index
-[ -s hg38.fa.gz ] || wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/bigZips/hg38.fa.gz
-perl process.genome.pl hg38.fa.gz CRISPR.seq.fa >hg38.with.CRISPR.fa
+currSHELL=`readlink -f $0`
+PRG=`dirname $currSHELL`
+cd $PRG
+
+[ -s hg38.fa.gz ] || wget https://hgdownload.cse.ucsc.edu/goldenpath/hg38/bigZips/p14/hg38.p14.fa.gz
+perl process.genome.pl hg38.p14.fa.gz CRISPR.seq.fa >hg38.with.CRISPR.fa
 ../bwa index -p hg38 hg38.with.CRISPR.fa
 ln -s hg38.with.CRISPR.fa hg38.fa
 

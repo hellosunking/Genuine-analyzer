@@ -5,7 +5,6 @@
 #
 set -o nounset
 set -o errexit
-#command || { echo "command failed"; exit 1; }
 
 if [ $# -lt 5 ]
 then
@@ -15,22 +14,7 @@ then
 	exit 2
 fi >>/dev/stderr
 
-## change log v231105
-## circos plot for Crispr
-## add raw sequence in *.targets.loci.info
-## pipe bwa to cutpoints
-## support both spCas9 and spRY
-## v230929
-## add mm10 support
-## add Crispr sequence to both hg38p14 and mm10p6
-## v230905
-## use BWA for alignment
-## discard no-Spike-in reads (most of them contains Spike-in, but have too many mismatch/indel)
-## rescue the head/tail reads, serving as SUPPORTING reads for loop/cut point
-## use Smith-Waterman algorithm to calculate the distance between designed sequence and genome
-## the rmdup step is now optional
-## bg noise is updated
-
+## parameters
 wkSHELL=`readlink -f $0`
 PRG=`dirname $wkSHELL`
 sid=$3
@@ -103,11 +87,11 @@ perl $PRG/process.unc.pl $sid.notCombined_1.fastq $sid.notCombined_2.fastq unc
 wait
 
 echo "## Step 2: Alignment"
-$PRG/bwa mem -v 2 -t $thread $bwaIndex unc.border.fq | perl $PRG/extract.border.no.rmdup.pl - unc.border
-$PRG/bwa mem -5SP -v 2 -t $thread $bwaIndex unc.pass.R1.fq unc.pass.R2.fq | perl $PRG/extract.pass.no.rmdup.pl - unc.pass
+$PRG/bwa mem -v 2 -t $thread $bwaIndex unc.border.fq | tee unc.border.sam | perl $PRG/extract.border.no.rmdup.pl - unc.border
+$PRG/bwa mem -5SP -v 2 -t $thread $bwaIndex unc.pass.R1.fq unc.pass.R2.fq | tee unc.pass.sam | perl $PRG/extract.pass.no.rmdup.pl - unc.pass
 
-$PRG/bwa mem -v 2 -t $thread $bwaIndex ext.border.fq | perl $PRG/extract.border.no.rmdup.pl - ext.border
-$PRG/bwa mem -5SP -v 2 -t $thread $bwaIndex ext.pass.R1.fq ext.pass.R2.fq | perl $PRG/extract.pass.no.rmdup.pl - ext.pass
+$PRG/bwa mem -v 2 -t $thread $bwaIndex ext.border.fq | tee ext.border.sam | perl $PRG/extract.border.no.rmdup.pl - ext.border
+$PRG/bwa mem -5SP -v 2 -t $thread $bwaIndex ext.pass.R1.fq ext.pass.R2.fq | tee ext.pass.sam | perl $PRG/extract.pass.no.rmdup.pl - ext.pass
 ## Note: exit here for bg noise modeling
 
 echo "## Step 3: Extract candidates"
@@ -122,14 +106,19 @@ perl $PRG/make.stat.pl $sid >$sid.final.stat
 ## circos plots
 echo "## Step 5: Data visualization"
 perl $PRG/prepare.circos.v2.pl $sid $designSeq $genome
-[ -s $sid.circos.conf ] && circos --conf $sid.circos.conf >>circos.log
-
 perl $PRG/prepare.circos.CRISPR.pl $sid $genome $enzyme
-[ -s $sid.circos.crispr.conf ] && circos --conf $sid.circos.crispr.conf >>circos.log
+checkCircos=`which circos 2>/dev/null`
+if [ $? != 0 ]
+then
+	echo "ERROR: circos is not found in your system!" >>/dev/stderr
+else
+	[ -s $sid.circos.conf ] && circos --conf $sid.circos.conf >>circos.log
+	[ -s $sid.circos.crispr.conf ] && circos --conf $sid.circos.crispr.conf >>circos.log
+fi
 
 ## clean up
 echo "## Step 6: Clean up"
-rm -f *fq *fastq *sam
+rm -f *fq *fastq #*sam
 
 cd ../
 wait

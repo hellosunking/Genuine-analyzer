@@ -42,55 +42,97 @@ designed guide sequence (with "N" allowed), and the 5th paramter is the genome i
 6th is the enzyme, could be spCas9 or spRY (Note that they require different index files), 7th is the background noise files (we provided
 the files for human and mouse), and 8th is the running thread (default is 16).
 
-Here is an example of running `Genuine.analyzer.sh` with outputs to the screen:
+We had prepared a walkthrough script that would automatically download a testing dataset, build genome index, and run Genuine-analyzer
+on this dataset. Make sure that you have `curl` installed (which is installed by default in most Linux distributions) and internet access,
+then change to `walkthrough` directory and run it:
 ```
-user@linux$ sh /path/to/Genuine-analyzer/Genuine.analyzer.sh HEK293T-spCas9-H1-rep3.read1.fq.gz HEK293T-spCas9-H1-rep3.read2.fq.gz HEK293T-spCas9-H1-rep3 GGGAAAGACCCAGCATCCGTNGG hg38
+user@linux$ cd walkthrough; sh walkthrough.sh
+```
+
+You should expect to see outputs very similar to the following (note that this script may takes time to finish):
+```
+=================================================================================================
+This script is designed to configure and run Genuine-Analyzer on a testing dataset automatically.
+=================================================================================================
+
+Checking testing datasets ...
+Downloading HEK293T-spCas9-V3-r2.read1.fq.gz ...
+Downloading HEK293T-spCas9-V3-r2.read2.fq.gz ...
+Checking files ...
+HEK293T-spCas9-V3-r2.read1.fq.gz: OK
+HEK293T-spCas9-V3-r2.read2.fq.gz: OK
+
+Checking genome index ...
+INFO: download genome fasta from UCSC ...
+INFO: building genome index (be patient) ...
+[bwa_index] Pack FASTA... 18.40 sec
+[bwa_index] Construct BWT for the packed sequence...
+[BWTIncCreate] textLength=6176591378, availableWord=446607504
+[BWTIncConstructFromPacked] 10 iterations done. 99999986 characters processed.
+... [lots of outputs are skipped here]
+[BWTIncConstructFromPacked] 680 iterations done. 6165967586 characters processed.
+[bwt_gen] Finished constructing BWT in 686 iterations.
+[bwa_index] 1974.43 seconds elapse.
+[bwa_index] Update BWT... 15.58 sec
+[bwa_index] Pack forward-only FASTA... 11.14 sec
+[bwa_index] Construct SA from BWT and Occ... 799.81 sec
+[main] Version: 0.7.17-r1188
+[main] CMD: ../bwa index -p hg38 hg38.with.CRISPR.fa
+[main] Real time: 2900.643 sec; CPU: 2819.367 sec
+
+Runing Genome-Analyzer (with 16 threads) ...
+The command line is:
+sh ../Genuine.analyzer.sh HEK293T-spCas9-V3-r2.read1.fq.gz HEK293T-spCas9-V3-r2.read2.fq.gz HEK293T-V3-r2 GGTGAGTGAGTGTGTGCGTGNGG hg38
 
 ## Parameters
-Reads : HEK293T-spCas9-H1-rep3.read1.fq.gz / HEK293T-spCas9-H1-rep3.read2.fq.gz
+Reads : HEK293T-spCas9-V3-r2.read1.fq.gz / HEK293T-spCas9-V3-r2.read2.fq.gz
 Genome: hg38
 Enzyme: spCas9
-Index : /path/to/Genuine-analyzer/genome/hg38
-Noise : /path/to/Genuine-analyzer/hg38.bgNoise
-## Step 1: Read preprocess
-## Step 2: Alignment
+Index : /mnt/github/Genuine-analyzer/genome/hg38
+Noise : /mnt/github/Genuine-analyzer/bgNoise/hg38.bgNoise
+# Step 1: Read preprocess
+# Step 2: Alignment
 [main] Version: 0.7.17-r1188
-[main] CMD: bwa mem -v 2 -t 16 hg38 unc.border.fq
-[main] Real time: 114.791 sec; CPU: 955.591 sec
+[main] CMD: /mnt/github/Genuine-analyzer/bwa mem -v 2 -t 32 /mnt/github/Genuine-analyzer/genome/hg38 unc.border.fq
+[main] Real time: 48.060 sec; CPU: 1081.455 sec
 [main] Version: 0.7.17-r1188
-[main] CMD: bwa mem -5SP -v 2 -t 16 hg38 unc.pass.R1.fq unc.pass.R2.fq
-[main] Real time: 27.866 sec; CPU: 258.024 sec
+[main] CMD: /mnt/github/Genuine-analyzer/bwa mem -5SP -v 2 -t 32 /mnt/github/Genuine-analyzer/genome/hg38 unc.pass.R1.fq unc.pass.R2.fq
+[main] Real time: 25.421 sec; CPU: 447.230 sec
 [main] Version: 0.7.17-r1188
-[main] CMD: bwa mem -v 2 -t 16 hg38 ext.border.fq
-[main] Real time: 509.918 sec; CPU: 8063.324 sec
+[main] CMD: /mnt/github/Genuine-analyzer/bwa mem -v 2 -t 32 /mnt/github/Genuine-analyzer/genome/hg38 ext.border.fq
+[main] Real time: 297.799 sec; CPU: 9033.967 sec
 [main] Version: 0.7.17-r1188
-[main] CMD: bwa mem -5SP -v 2 -t 16 hg38 ext.pass.R1.fq ext.pass.R2.fq
-[main] Real time: 68.682 sec; CPU: 860.383 sec
-## Step 3: Extract candidates
-## Step 4: Filter candidates
-Loading /path/to/Genuine-analyzer/hg38.bgNoise
+[main] CMD: /mnt/github/Genuine-analyzer/bwa mem -5SP -v 2 -t 32 /mnt/github/Genuine-analyzer/genome/hg38 ext.pass.R1.fq ext.pass.R2.fq
+[main] Real time: 70.823 sec; CPU: 1249.871 sec
+# Step 3: Extract candidates
+# Step 4: Filter candidates
+Loading bgNoise: /mnt/github/Genuine-analyzer/bgNoise/hg38.bgNoise
 => Valid loci: 127096, supporting reads: 39848021.
-Loading genome: hg38 (/path/to/Genuine-analyzer/genome/hg38.fa)
-Loading HEK293T-spCas9-H1-rep3.cutpoints
-=> Valid loci: 21420, supporting reads: 12653873.
-Filtering cutpoints against GGGAAAGACCCAGCATCCGTNGG
-Loading HEK293T-spCas9-H1-rep3.circles
-Loading HEK293T-spCas9-H1-rep3.translocation
+Loading genome: hg38 (/mnt/github/Genuine-analyzer/genome/hg38.fa)
+Loading HEK293T-V3-r2.cutpoints
+=> Valid loci: 83648, supporting reads: 13259999.
+Filtering cutpoints against GGTGAGTGAGTGTGTGCGTGNGG
+Loading HEK293T-V3-r2.circles
+Loading HEK293T-V3-r2.translocation
 ## Step 5: Data visualization
 ## Step 6: Clean up
 #### Analysis finished. ####
+
+Done. The outputs are stored in 'HEK293T-V3-r2' directory, and
+the major results should be identical to those in 'example.output/' directory.
+Please refer to README.md file for interpreting the results.
 ```
 
 ## 4. Output files
 The outputs are all written in the directory with the name of the sample id paramater.
-The following files are the main results (where XXX is the sample id):
+The following files are the main results (where `XXX` is the sample id in the 3r parameter):
 
-- `XXX.final.stat` key statistics during the analysis
-- `XXX.targets.html` target sites in colored HTML format
-- `XXX.targets.loci.info` target sites in plain text
-- `XXX.structural.variants` structural variants in plain text (empty for none-detected)
-- `XXX.links.png` and `XXX.links.svg` visualization for structural variants
-- `XXX.crispr.insertions.png` and `XXX.crispr.insertions.svg` visualization for CRISPR insertions
+- `XXX.final.stat`: key statistics during the analysis
+- `XXX.targets.html`: target sites in colored HTML format
+- `XXX.targets.loci.info`: target sites in plain text
+- `XXX.structural.variants`: structural variants in plain text (empty for none-detected)
+- `XXX.links.png` and `XXX.links.svg`: visualization for structural variants
+- `XXX.crispr.insertions.png` and `XXX.crispr.insertions.svg`: visualization for CRISPR insertions
 
 Other files are intermediate, you can ignore them after a successful analysis.
 

@@ -1,2 +1,3 @@
-[Genuine-Seq experiments](Genuine-Seq/)
+[GENUINE-Seq experiments](GENUINE-Seq/)
+
 [Amplicon-seq validations](Amplicon-seq/)

@@ -5,6 +5,7 @@ analyzed using [CRISPResso2](https://github.com/pinellolab/CRISPResso2).
 
 Here is the example codes (with key parameters) we used during the analysis:
 ```
+sid=sample_ID
 R1=/path/to/Read1.fq.gz
 R2=/path/to/Read2.fq.gz
 amplicon=Sequence_of_the_amplicon

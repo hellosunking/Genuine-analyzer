@@ -1,0 +1,104 @@
+CRISPResso version 2.3.3
+[Command used]:
+/mnt/zyzhang/04.software/miniconda3/miniconda3/envs/crispresso2_env/bin/CRISPResso -x /mnt/kqsoft/Genomes/bowtie2.index/hg38.HBV.EBV --allele_plot_pcts_only_for_assigned_reference --write_detailed_allele_table --plot_window_size 40 --max_rows_alleles_around_cut_to_plot 100 --min_identity_score 50 --min_frequency_alleles_around_cut_to_plot 0.00001 -r1 V1-OT16-r2.pooled.R1.fq -r2 V1-OT16-r2.pooled.R2.fq -a TTCTTCTGTGTGTAAACAAGCTCCTTGTTCTACGTCTAGGATGGAGATGGTAGAAGCAGGGTTGCCAACAGAGGAGATAGGAGGGGAAAGGGGGATTTACTCCAGGTTTTGAGGCACAGAGAAGGAAGGGTTTGTCAGGGGTAGGGAGAGCTGGAGACCAGGGAGTTGGAGGCAAGCCTAGACTCCCCTCTGGTGGCAAG -g GGAAAGGGGGATTTACTCC -n V1-OT16-r2
+
+[Execution log]:
+CRISPRessoPro not installed
+Computing quantification windows
+Added 0 guides with flexible matching
+	Original flexiguides: ['None']
+	Found guides: []
+	Mismatch locations: []
+Counting reads in input
+Processing sequences with fastp...
+Read1 before filtering:
+total reads: 322116
+total bases: 48317400
+Q20 bases: 48008915(99.3615%)
+Q30 bases: 46961834(97.1945%)
+Q40 bases: 46961834(97.1945%)
+
+Read2 before filtering:
+total reads: 322116
+total bases: 48317400
+Q20 bases: 48046538(99.4394%)
+Q30 bases: 46937504(97.1441%)
+Q40 bases: 46937504(97.1441%)
+
+Merged and filtered:
+total reads: 320929
+total bases: 64039817
+Q20 bases: 63724602(99.5078%)
+Q30 bases: 62518343(97.6242%)
+Q40 bases: 62518343(97.6242%)
+
+Filtering result:
+reads passed filter: 644232
+reads failed due to low quality: 0
+reads failed due to too many N: 0
+reads corrected by overlap analysis: 18820
+bases corrected by overlap analysis: 25636
+
+Duplication rate: 96.4643%
+
+Insert size peak (evaluated by paired-end reads): 200
+
+Read pairs merged: 320929
+% of original read pairs: 99.6315%
+% in reads after filtering: 100%
+
+
+JSON report: CRISPResso_on_V1-OT16-r2/fastp_report.json
+HTML report: CRISPResso_on_V1-OT16-r2/fastp_report.html
+
+fastp -i V1-OT16-r2.pooled.R1.fq -I V1-OT16-r2.pooled.R2.fq --merge --merged_out CRISPResso_on_V1-OT16-r2/out.extendedFrags.fastq.gz --unpaired1 CRISPResso_on_V1-OT16-r2/out.notCombined_1.fastq.gz --unpaired2 CRISPResso_on_V1-OT16-r2/out.notCombined_2.fastq.gz --overlap_len_require 10 --thread 1 --json CRISPResso_on_V1-OT16-r2/fastp_report.json --html CRISPResso_on_V1-OT16-r2/fastp_report.html --disable_adapter_trimming --disable_trim_poly_g --disable_quality_filtering --disable_length_filtering 
+fastp v1.0.1, time used: 4 seconds
+Done!
+Done!
+Counting reads after preprocessing...
+Aligning sequences...
+Iterating over fastq file to identify reads; 50000 reads identified.
+Iterating over fastq file to identify reads; 100000 reads identified.
+Iterating over fastq file to identify reads; 150000 reads identified.
+Iterating over fastq file to identify reads; 200000 reads identified.
+Iterating over fastq file to identify reads; 250000 reads identified.
+Iterating over fastq file to identify reads; 300000 reads identified.
+Finished reading fastq file; 4975 unique reads found of 320929 total reads found 
+Processing Reads; 0 Completed out of 4975 Unique Reads
+Finished reads; N_TOT_READS: 320929 N_COMPUTED_ALN: 4871 N_CACHED_ALN: 314985 N_COMPUTED_NOTALN: 104 N_CACHED_NOTALN: 969
+Done!
+Quantifying indels/substitutions...
+Done!
+Calculating allele frequencies...
+Done!
+Saving processed data...
+Making Plots...
+Plotting read bar plot
+Plotting read class pie chart and bar plot
+Begin processing plots for amplicon Reference
+Plotting nucleotide quilt across amplicon
+Plotting nucleotide distribuition around sgRNA GGAAAGGGGGATTTACTCC for Reference
+Plotting indel size distribution for Reference
+Plotting frequency deletions/insertions for Reference
+Plotting amplication modifications for Reference
+Plotting modification frequency for Reference
+Plotting quantification window locations for Reference
+Plotting position dependent indel for Reference
+Plotting allele distribution around cut for Reference
+Done!
+Done!
+Removing Intermediate files...
+ <=1.0% of modifications were inside of the quantification window. Total modifications: 42347, Modifications in window: 390, Modifications outside window: 41957.
+ >=1.0% of reads have modifications at the start or end. Total reads: 319856, Irregular reads: 3556.
+ >=0.2% of substitutions were outside of the quantification window. Total substitutions: 37076, Substitutions outside window: 36815.
+ >=30.0% of modifications were substitutions. This could potentially indicate poor sequencing quality. Total modifications: 42347, Substitutions: 37076.
+                                                                               
+                                        _                                      
+                                       '  )                                    
+                                       .-'                                     
+                                      (____                                    
+                                   C)|     \                                   
+                                     \     /                                   
+                                      \___/                                    
+
+Analysis Complete!
